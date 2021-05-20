@@ -5,10 +5,11 @@ using namespace std;
 const char PLAYER_1 = 'X' ;
 const char PLAYER_2 = 'O' ;
 const int WIN = 1;
-const int LOS = -1;
+const int LOSE = -1;
 const int TIE = 0;
 
 typedef vector <vector<char> > board_vec;
+
 
 struct s_board
 {
@@ -53,7 +54,35 @@ int calcule_score_board(board_vec board)
     return 0;
 }
 
-vector <s_board>  get_all_possibles_moves(board_vec board, char player)
+
+int minimax(board_vec board, int dept, char player)
+{
+    int score = calcule_score_board(board);
+    if (score != 0)
+    {
+        if (score == WIN)
+            return WIN;
+        return LOSE;
+    }
+    if (player == PLAYER_1)
+    {
+        for (size_t i = 0; i < 3; i++)
+        { 
+            for (size_t j = 0; j < 3; j++)
+            {
+                if (board[i][j] == ' ')
+                {
+                    board[i][j] = player;
+                    score = minimax(board, dept + 1, PLAYER_1);
+                    board[i][j] = ' ';
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+vector <s_board>  get_the_best_move(board_vec board, char player)
 {
     vector<s_board> all_possible;
 
@@ -66,7 +95,7 @@ vector <s_board>  get_all_possibles_moves(board_vec board, char player)
             {
                 board[i][j] = player;
                 board_cas.board = board;
-                board_cas.score = calcule_score_board(board_cas.board);
+                board_cas.score = minimax(board_cas.board, 1, PLAYER_1);
                 board[i][j] = ' ';
                 all_possible.push_back(board_cas);
             }
@@ -75,6 +104,7 @@ vector <s_board>  get_all_possibles_moves(board_vec board, char player)
     }
     return all_possible;
 }
+
 
 board_vec initial_board()
 {
@@ -96,8 +126,5 @@ int main(int argc, char const *argv[])
 {
     board_vec board;
     board = initial_board();
-    
-
     return 0;
-
 }
