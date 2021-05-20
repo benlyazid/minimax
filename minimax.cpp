@@ -2,7 +2,13 @@
 #include <vector>
 using namespace std;
 
-typedef vector <vector<char>> board_vec;
+const char PLAYER_1 = 'X' ;
+const char PLAYER_2 = 'O' ;
+const int WIN = 1;
+const int LOS = -1;
+const int TIE = 0;
+
+typedef vector <vector<char> > board_vec;
 
 struct s_board
 {
@@ -10,12 +16,42 @@ struct s_board
     int score;
 };
 
-
-int calcule_score_board(board_vec)
+int calcule_score_board(board_vec board)
 {
+    for (size_t i = 0; i < 3; i++)
+    {
+        if (board[i][0] == board[i][1] == board[i][2])
+        {
+            if (board[i][0] == PLAYER_1)
+                return 10;
+            else
+                return -10;
+        } 
+        if (board[0][i] == board[1][i] == board[2][i])
+        {
+            if (board[i][0] == PLAYER_1)
+                return 10;
+            else
+                return -10;
+        }
+    }
+    if (board[0][0] == board[1][1] == board[2][2])
+    {
+        if (board[0][0] == PLAYER_1)
+            return 10;
+        else
+            return -10;
+    } 
+    
+    if (board[2][0] == board[1][1] == board[0][2])
+    {
+        if (board[0][0] == PLAYER_1)
+            return 10;
+        else
+            return -10;
+    }
     return 0;
 }
-
 
 vector <s_board>  get_all_possibles_moves(board_vec board, char player)
 {
