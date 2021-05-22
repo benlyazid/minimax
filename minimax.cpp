@@ -19,6 +19,8 @@ struct s_board
     int score;
 };
 
+int game_still_running(board_vec board);
+
 int calcule_score_board(board_vec board)
 {
     //printf("board\n");
@@ -60,13 +62,15 @@ int calcule_score_board(board_vec board)
     return 0;
 }
 
-int minimax(board_vec board, int dept, char player)
+
+int minimax(board_vec board, int dept, char player, bool print)
 {
     int score = calcule_score_board(board);
     int best_score = 0;
 
-    print_board(board);
-    printf("check score is %d   %d\n", score, dept);
+
+    //print_board(board);
+    //printf("check score is %d   %d last paly by %c \n", score, dept, player);
 
     if (score != 0)
     {
@@ -80,6 +84,8 @@ int minimax(board_vec board, int dept, char player)
 
         return LOSE;
     }
+    if ((game_still_running(board)) == 0)
+        return TIE;
     for (size_t i = 0; i < 3; i++)
     {
         for (size_t j = 0; j < 3; j++)
@@ -87,20 +93,17 @@ int minimax(board_vec board, int dept, char player)
             if (board[i][j] == ' ')
             {
                 board[i][j] = player;
+                printf("palyer is %c    %d\n", player, dept);
                 if (player == PLAYER_1)
                 {
-                    //printf("check0\n");
                     best_score = -100;
-                    score = minimax(board, dept + 1, PLAYER_2);
+                    score = minimax(board, dept + 1, PLAYER_2, print);
                     best_score = max(score, best_score);
-                    //printf("max score is %d %d\n", score, best_score);
                 }
                 else
                 {
-                    //printf("check1\n");
-
                     best_score = 100;
-                    score = minimax(board, dept + 1, PLAYER_1);
+                    score = minimax(board, dept + 1, PLAYER_1, print);
                     //printf("min score is %d %d\n", score, best_score);
                     best_score = min(score, best_score);
                 }
@@ -108,8 +111,6 @@ int minimax(board_vec board, int dept, char player)
             }
         }
     }
-     //printf("best score is %d\n", best_score);
-
     return (best_score);
 }
 
@@ -118,6 +119,7 @@ int   *get_the_best_move(board_vec board, char player)
     int best_score = -100;
     int score;
     int *move = new int[2];
+    bool print = false;
 
     for (size_t i = 0; i < 3; i++)
     {
@@ -125,8 +127,8 @@ int   *get_the_best_move(board_vec board, char player)
         {
             if (board[i][j] == ' ')
             {
-                board[i][j] = player;
-                score = minimax(board, 1, player);
+                //board[i][j] = player;
+                score = minimax(board, 1, player, true);
                 printf("%d  for %ld %ld\n", score, i, j);
                 if (score > best_score)
                 {
@@ -134,7 +136,7 @@ int   *get_the_best_move(board_vec board, char player)
                     move[0] = i;
                     move[1] = j;
                 }
-                board[i][j] = ' ';
+                //board[i][j] = ' ';
             }
         }
     }
@@ -186,10 +188,11 @@ int main(int argc, char const *argv[])
 {
     board_vec board;
     board = initial_board();
-    board[0][0] = 'X';
-    board[1][0] = '0';
+    board[0][0] = 'O';
+    board[0][2] = 'X';
     board[1][1] = 'O';
-    board[2][0] = 'X';
+    board[1][2] = 'O';
+    board[2][2] = 'X';
     print_board(board);
     int *best_move;
 
